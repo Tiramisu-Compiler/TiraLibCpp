@@ -827,6 +827,19 @@ TEST(TiraLibCppTest, UnrollingLNeg1Mismatch)
   EXPECT_THROW(apply_schedule_multi_comp_sample(schedule), std::invalid_argument);
 }
 
+TEST(TiraLibCppTest, UnknownActionThrows)
+{
+  EXPECT_THROW(apply_schedule_blur("Z(L0,comps=['comp_blur'])"),
+               std::invalid_argument);
+}
+
+TEST(TiraLibCppTest, MalformedActionThrows)
+{
+  // Leading char 'P' is known, but the body is missing the closing paren.
+  EXPECT_THROW(apply_schedule_blur("P(L0,comps=['comp_blur']"),
+               std::invalid_argument);
+}
+
 TEST(TiraLibCppTest, Matrix)
 {
   std::string schedule = "M([0, 1, 0, 1, 0, 0, 0, 0, 1],comps=['comp_blur'])";

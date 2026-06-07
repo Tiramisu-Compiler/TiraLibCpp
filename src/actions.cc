@@ -4,6 +4,16 @@
 #include <TiraLibCPP/utils.h>
 #include <TiraLibCPP/dbhelpers.h>
 
+static void parse_or_throw(const std::string &action_str, std::smatch &match,
+                           const std::regex &re)
+{
+    if (!std::regex_search(action_str, match, re))
+    {
+        throw std::invalid_argument(
+            "Failed to parse schedule token: " + action_str);
+    }
+}
+
 bool apply_action(std::string action_str, tiramisu::function *implicit_function, Result &result)
 {
     bool is_legal = true;
@@ -14,7 +24,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
         std::string regex_str = "P\\(L(\\d),comps=\\[([\\w', ]*)\\]\\)";
         std::regex re(regex_str);
         std::smatch match;
-        std::regex_search(action_str, match, re);
+        parse_or_throw(action_str, match, re);
         int level = std::stoi(match[1]);
         std::string comps_str = match[2];
         comps_str.erase(std::remove_if(comps_str.begin(), comps_str.end(), isSingleQuoteOrWhiteSpace), comps_str.end());
@@ -31,7 +41,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
         std::string regex_str = "U\\(L(-?\\d+),(\\d+),comps=\\[([\\w', ]*)\\]\\)";
         std::regex re(regex_str);
         std::smatch match;
-        std::regex_search(action_str, match, re);
+        parse_or_throw(action_str, match, re);
         int level = std::stoi(match[1]);
         int factor = std::stoi(match[2]);
         std::string comps_str = match[3];
@@ -90,7 +100,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
         std::string regex_str = "I\\(L(\\d),L(\\d),comps=\\[([\\w', ]*)\\]\\)";
         std::regex re(regex_str);
         std::smatch match;
-        std::regex_search(action_str, match, re);
+        parse_or_throw(action_str, match, re);
         int level1 = std::stoi(match[1]);
         int level2 = std::stoi(match[2]);
         std::string comps_str = match[3];
@@ -107,7 +117,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
         std::string regex_str = "R\\(L(\\d),comps=\\[([\\w', ]*)\\]\\)";
         std::regex re(regex_str);
         std::smatch match;
-        std::regex_search(action_str, match, re);
+        parse_or_throw(action_str, match, re);
         int level = std::stoi(match[1]);
         std::string comps_str = match[2];
         comps_str.erase(std::remove_if(comps_str.begin(), comps_str.end(), isSingleQuoteOrWhiteSpace), comps_str.end());
@@ -123,7 +133,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
         std::string regex_str = "S\\(L(\\d),L(\\d),(-?\\d+),(-?\\d+),comps=\\[([\\w', ]*)\\]\\)";
         std::regex re(regex_str);
         std::smatch match;
-        std::regex_search(action_str, match, re);
+        parse_or_throw(action_str, match, re);
         int level1 = std::stoi(match[1]);
         int level2 = std::stoi(match[2]);
         int factor1 = std::stoi(match[3]);
@@ -174,7 +184,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
         std::string regex_str = "F\\(L(\\d),comps=\\[([\\w', ]*)\\]\\)";
         std::regex re(regex_str);
         std::smatch match;
-        std::regex_search(action_str, match, re);
+        parse_or_throw(action_str, match, re);
         int level = std::stoi(match[1]);
         std::string comps_str = match[2];
         comps_str.erase(std::remove_if(comps_str.begin(), comps_str.end(), isSingleQuoteOrWhiteSpace), comps_str.end());
@@ -211,7 +221,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
             std::string regex_str = "T1\\(L(\\d),(\\d+),comps=\\[([\\w', ]*)\\]\\)";
             std::regex re(regex_str);
             std::smatch match;
-            std::regex_search(action_str, match, re);
+            parse_or_throw(action_str, match, re);
             int level1 = std::stoi(match[1]);
             int factor1 = std::stoi(match[2]);
             std::string comps_str = match[3];
@@ -230,7 +240,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
             std::string regex_str = "T2\\(L(\\d),L(\\d),(\\d+),(\\d+),comps=\\[([\\w', ]*)\\]\\)";
             std::regex re(regex_str);
             std::smatch match;
-            std::regex_search(action_str, match, re);
+            parse_or_throw(action_str, match, re);
             int level1 = std::stoi(match[1]);
             int level2 = std::stoi(match[2]);
             int factor1 = std::stoi(match[3]);
@@ -251,7 +261,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
             std::string regex_str = "T3\\(L(\\d),L(\\d),L(\\d),(\\d+),(\\d+),(\\d+),comps=\\[([\\w', ]*)\\]\\)";
             std::regex re(regex_str);
             std::smatch match;
-            std::regex_search(action_str, match, re);
+            parse_or_throw(action_str, match, re);
             int level1 = std::stoi(match[1]);
             int level2 = std::stoi(match[2]);
             int level3 = std::stoi(match[3]);
@@ -279,7 +289,7 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
         std::string regex_str = "M\\(\\[([\\d, ]+)\\],comps=\\[([\\w', ]*)\\]\\)";
         std::regex re(regex_str);
         std::smatch match;
-        std::regex_search(action_str, match, re);
+        parse_or_throw(action_str, match, re);
         std::string factors_str = match[1];
         factors_str.erase(std::remove_if(factors_str.begin(), factors_str.end(), isSingleQuoteOrWhiteSpace), factors_str.end());
         std::vector<int> factors;
@@ -325,8 +335,8 @@ bool apply_action(std::string action_str, tiramisu::function *implicit_function,
     }
 
     default:
-        std::cerr << "No action" << std::endl;
-        break;
+        throw std::invalid_argument(
+            "Unknown schedule token: " + action_str);
     }
 
     return is_legal;
