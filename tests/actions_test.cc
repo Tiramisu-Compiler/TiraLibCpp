@@ -840,6 +840,14 @@ TEST(TiraLibCppTest, MalformedActionThrows)
                std::invalid_argument);
 }
 
+TEST(TiraLibCppTest, EmptyScheduleAccepted)
+{
+  // Empty schedule is the identity and must be accepted. Trailing pipes
+  // (i.e. empty tokens) must be tolerated as well.
+  EXPECT_NO_THROW(apply_schedule_blur(""));
+  EXPECT_NO_THROW(apply_schedule_blur("P(L0,comps=['comp_blur'])|"));
+}
+
 TEST(TiraLibCppTest, Matrix)
 {
   std::string schedule = "M([0, 1, 0, 1, 0, 0, 0, 0, 1],comps=['comp_blur'])";
