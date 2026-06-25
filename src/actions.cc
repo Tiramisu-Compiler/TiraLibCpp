@@ -16,6 +16,7 @@ static void parse_or_throw(const std::string &action_str, std::smatch &match,
 
 bool apply_action(std::string action_str, tiramisu::function *implicit_function, Result &result)
 {
+    if (action_str.empty()) return true;
     bool is_legal = true;
     switch (action_str[0])
     {
